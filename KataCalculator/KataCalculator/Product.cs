@@ -36,7 +36,8 @@ namespace KataCalculator
             this.BasePrice = Price;
             TaxPrice= CalculateTaxPrice();
         }
-       public decimal CalculateTaxValue()
+
+        public decimal CalculateTaxValue()
         {
             return Math.Round(this.BasePrice * (TaxPercent / 100), 2);
         }
@@ -47,9 +48,8 @@ namespace KataCalculator
         }
 
         override public string ToString()
-        {
-            USDollar currency = new USDollar(BasePrice);
-            return $"Name: {Name}, UPC: {UPC}, Price: {currency.ToString}";
+        { 
+            return $"Name: {Name}, UPC: {UPC}, Price: {BasePrice}";
         }
     }
 }
