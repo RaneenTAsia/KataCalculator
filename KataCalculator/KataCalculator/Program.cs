@@ -2,16 +2,17 @@
 using KataCalculator;
 Console.WriteLine("Specify Tax:");
 
-decimal tax = Decimal.Parse(Console.ReadLine()) ;
-
+decimal? tax = CheckInput();
 
 ProductViewModel view = new ProductViewModel();
 
-PrintProducts(view, tax);
+if (tax != null)
+    ChangeTax(tax);
 
-static void PrintProducts(ProductViewModel view, decimal tax)
+PrintProducts(view);
+
+static void PrintProducts(ProductViewModel view)
 {
-    TaxCalculations.ChangeTax(tax);
     view.GetAll();
     foreach (var item in view.Products)
     {
@@ -22,3 +23,13 @@ static void PrintProducts(ProductViewModel view, decimal tax)
     }
 }
 
+static void ChangeTax(decimal? tax)
+{
+    TaxCalculations.ChangeTax((decimal)tax);
+}
+
+static decimal? CheckInput()
+{
+    string input = Console.ReadLine();
+    return string.IsNullOrEmpty(input) ? null : Decimal.Parse(input);
+}
