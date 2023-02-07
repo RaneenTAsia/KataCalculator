@@ -1,20 +1,23 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using KataCalculator;
+Console.WriteLine("Specify Tax:");
+
+decimal tax = Decimal.Parse(Console.ReadLine()) ;
+
 
 ProductViewModel view = new ProductViewModel();
 
-PrintProducts(view);
+PrintProducts(view, tax);
 
-static void PrintProducts(ProductViewModel view)
+static void PrintProducts(ProductViewModel view, decimal tax)
 {
+    TaxCalculations.ChangeTax(tax);
     view.GetAll();
     foreach (var item in view.Products)
     {
         Console.WriteLine(item.ToString());
-        Console.WriteLine($"Product price reported as ${item.BasePrice} before tax and ${item.CalculateTaxValue()} after {item.TaxPercent}% tax.");
-        item.TaxPercent = 30M;
-        Console.WriteLine(item.ToString());
-        Console.WriteLine($"Product price reported as ${item.BasePrice} before tax and ${item.TaxPrice} after {item.TaxPercent}% tax.");
+        TaxCalculations calc = new TaxCalculations(item);
+        Console.WriteLine($"Product price reported as ${item.BasePrice} before tax and ${calc.TaxedPrice} after {calc.TaxPercent}% tax.");
         Console.WriteLine();
     }
 }

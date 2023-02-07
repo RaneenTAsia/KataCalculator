@@ -19,5 +19,6 @@ namespace KataCalculator
         }
         #endregion
         }
+
 }
    

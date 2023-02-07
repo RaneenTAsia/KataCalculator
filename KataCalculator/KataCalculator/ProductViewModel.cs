@@ -19,6 +19,10 @@ namespace KataCalculator
         {
             List<Product> list=Products.Select(prod=>prod).ToList();
         }
+        public void GetFirst()
+        {
+            Product prod = Products.First();
+        }
 
     }
 }
