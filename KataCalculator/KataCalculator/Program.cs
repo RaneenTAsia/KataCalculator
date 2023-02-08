@@ -3,19 +3,17 @@ using KataCalculator;
 using KataCalculator.Discount;
 
 Console.WriteLine("Specify Tax:");
-
 decimal? tax = CheckInput();
+
+Console.WriteLine("Specify general discount");
+decimal? discount = CheckInput();
 
 ProductViewModel view = new ProductViewModel();
 
 if (tax != null)
-<<<<<<< Updated upstream
-    ChangeTax(tax);
-=======
-    TaxCalculations.TaxPercent=(decimal)tax;
+    PriceCalculator.TaxPercent=(decimal)tax;
 if (discount != null)
-    Discount.DiscountPercent=(decimal)discount;
->>>>>>> Stashed changes
+    PriceCalculator.DiscountPercent=(decimal)discount;
 
 PrintProducts(view);
 
@@ -24,27 +22,15 @@ static void PrintProducts(ProductViewModel view)
     view.GetAll();
     foreach (var item in view.Products)
     {
+        PriceCalculator calculator= new PriceCalculator(item);
         Console.WriteLine(item.ToString());
-<<<<<<< Updated upstream
-        TaxCalculations calc = new TaxCalculations(item);
-        Console.WriteLine($"Product price reported as ${item.BasePrice} before tax and ${calc.TaxedPrice} after {calc.TaxPercent}% tax.");
-=======
-        Console.WriteLine($"Tax={TaxCalculations.TaxPercent}%, discount={Discount.DiscountPercent}%, " +
-            $"Tax amount=${calc.CalculateTaxValue()}, Discount amount=${discount.CalculateDiscount()}");
-        Console.WriteLine($"Price before =${item.BasePrice}, price after = ${calc.TaxedPrice-discount.CalculateDiscount()}");
->>>>>>> Stashed changes
+        Console.WriteLine($"Tax={PriceCalculator.TaxPercent}%, discount={PriceCalculator.DiscountPercent}%, " +
+            $"Tax amount=${calculator.CalculateTaxValue()}, Discount amount=${calculator.CalculateDiscount()}");
+        Console.WriteLine($"Price before =${item.BasePrice}, price after = ${calculator.TaxedPrice-calculator.CalculateDiscount()}");
         Console.WriteLine();
     }
 }
 
-<<<<<<< Updated upstream
-static void ChangeTax(decimal? tax)
-{
-    TaxCalculations.ChangeTax((decimal)tax);
-}
-
-=======
->>>>>>> Stashed changes
 static decimal? CheckInput()
 {
     string input = Console.ReadLine();

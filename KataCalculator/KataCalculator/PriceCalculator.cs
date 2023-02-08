@@ -1,20 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace KataCalculator
 {
-    public class TaxCalculations
+    public class PriceCalculator
     {
         static decimal _taxPercent = 20M;
-        public decimal TaxPercent { get { return _taxPercent; } set { _taxPercent = value; } }
+        public static decimal TaxPercent { get { return _taxPercent; } set { _taxPercent = value; } }
         public decimal TaxedPrice { get; set; }
         public Product product { get; set; }
-        public TaxCalculations() { }
+        static decimal _discountPercent = 0M;
+        public static decimal DiscountPercent { get { return _discountPercent; } set { _discountPercent = value; } }
+        public PriceCalculator() { }
 
-        public TaxCalculations(Product product)
+        public PriceCalculator(Product product)
         {
             this.product = product;
             TaxedPrice=CalculateTaxPrice();
@@ -29,9 +32,14 @@ namespace KataCalculator
         {
             return CalculateTaxValue() + product.BasePrice;
         }
-        public static void ChangeTax(decimal tax)
+        public decimal CalculateDiscount()
         {
-            _taxPercent = tax;
+            return Math.Round(DiscountPercent / 100 * product.BasePrice, 2);
+        }
+
+        public decimal CalculateDiscountedPrice()
+        {
+            return Math.Round(product.BasePrice - CalculateDiscount(), 2);
         }
 
     }
