@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KataCalculator.Discounts;
+using KataCalculator.Products;
 
 namespace KataCalculator
 {
@@ -25,23 +27,34 @@ namespace KataCalculator
 
         public decimal CalculateTaxValue()
         {
-            return Math.Round(product.BasePrice * (TaxPercent / 100), 2);
+            if (DiscountList.FindUPCDiscount(product.UPC) != null && DiscountList.FindUPCDiscount(product.UPC).GetType() == typeof(PrecedenceSelectiveDiscount))
+            return ((product.BasePrice-CalculateUPCDiscount()) * (TaxPercent / 100)).DecimalPlaces(2);
+            else
+            return (product.BasePrice * (TaxPercent / 100)).DecimalPlaces(2);
         }
+
         public decimal CalculateDiscount()
         {
-            return Math.Round(DiscountPercent / 100 * product.BasePrice, 2);
+            return (DiscountPercent / 100 * product.BasePrice).DecimalPlaces(2);
         }
 
         public decimal CalculateUPCDiscount()
         {
-            decimal UPCDiscount=DiscountList.FindUPCDiscount(product.UPC);
-            return Math.Round(UPCDiscount / 100 * product.BasePrice, 2);
+            decimal? UPCDiscount = 0M;
+            if (DiscountList.FindUPCDiscount(product.UPC)!=null)
+            UPCDiscount=DiscountList.FindUPCDiscount(product.UPC).DiscountPercent;
+            if(UPCDiscount != 0)
+            return ((decimal)UPCDiscount / 100 * product.BasePrice).DecimalPlaces(2);
+            else
+            return 0;
 
         }
+
         public decimal AccumulativeDiscountAmount()
         {
             return CalculateUPCDiscount() + CalculateDiscount();
         }
+
         public decimal CalculateGeneralDiscountedAndTaxedPrice()
         {
             decimal value= product.BasePrice+ CalculateTaxValue()-AccumulativeDiscountAmount();

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KataCalculator
+namespace KataCalculator.Products
 {
     public partial class ProductRepository
     {
@@ -18,7 +18,6 @@ namespace KataCalculator
             };
         }
         #endregion
-        }
+    }
 
 }
-   

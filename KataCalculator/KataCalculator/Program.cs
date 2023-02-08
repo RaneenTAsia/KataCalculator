@@ -1,5 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using KataCalculator;
+using KataCalculator.Discounts;
+using KataCalculator.Products;
 
 ChangeDefaultTaxAndDiscount();
 
@@ -14,8 +16,9 @@ static void PrintProducts(ProductViewModel view, SelectiveDiscountList DiscountL
     foreach (var item in view.Products)
     {
         PriceCalculator calculator = new PriceCalculator(item, DiscountList);
+
         Console.WriteLine(item.ToString());
-        Console.WriteLine($"Tax={PriceCalculator.TaxPercent}%, discount={PriceCalculator.DiscountPercent}%, " +
+        Console.WriteLine($"Tax={PriceCalculator.TaxPercent}%, " +
             $"Tax amount=${calculator.CalculateTaxValue()}, Discount amount=${calculator.AccumulativeDiscountAmount()}");
         Console.WriteLine($"Price before = ${item.BasePrice}, price after = ${calculator.CalculateGeneralDiscountedAndTaxedPrice()}");
         Console.WriteLine();
@@ -41,14 +44,30 @@ static SelectiveDiscountList PopulateDiscountList()
     decimal? discountRate = 1M;
     while (discountRate != null)
     {
-        Console.WriteLine("Give UPC and UPC Discount Rate");
+        Console.WriteLine("Give UPC:");
         UPC = CheckIntInput();
         if (UPC == null)
             break;
+
+        Console.WriteLine("Give Discount Percent:");
         discountRate = CheckDecimalInput();
+
+        Console.WriteLine("Specify if Before or After:");
+        string TypeInput = Console.ReadLine().ToLower();
+
         if (UPC != null && discountRate != null)
-            DiscountList.AddDiscount(new SelectiveDiscount((Int32)UPC, (decimal)discountRate));
+        {
+            if (TypeInput == null || TypeInput.Equals("after"))
+            {
+                DiscountList.AddDiscount(new SelectiveDiscount((Int32)UPC, (decimal)discountRate));
+            }
+            else if (TypeInput.Equals("before")) ;
+            {
+                DiscountList.AddDiscount(new PrecedenceSelectiveDiscount((Int32)UPC, (decimal)discountRate));
+            }
+        }
     }
+    
 
     return DiscountList;
 }

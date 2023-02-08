@@ -5,7 +5,7 @@ using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KataCalculator
+namespace KataCalculator.Products
 {
     public class Product
     {
@@ -21,7 +21,7 @@ namespace KataCalculator
         {
             Name = name;
             this.UPC = UPC;
-            this.BasePrice = Price;
+            BasePrice = Price;
         }
 
         override public string ToString()
