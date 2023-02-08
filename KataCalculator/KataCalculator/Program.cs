@@ -3,7 +3,7 @@ using KataCalculator;
 
 ChangeDefaultTaxAndDiscount();
 
-SelectiveDiscountList DiscountList = NewMethod();
+SelectiveDiscountList DiscountList = PopulateDiscountList();
 
 ProductViewModel view = new ProductViewModel();
 PrintProducts(view, DiscountList);
@@ -33,7 +33,7 @@ static Int32? CheckIntInput()
     return string.IsNullOrEmpty(input) ? null : Int32.Parse(input);
 }
 
-static SelectiveDiscountList NewMethod()
+static SelectiveDiscountList PopulateDiscountList()
 {
     SelectiveDiscountList DiscountList = new SelectiveDiscountList();
 
