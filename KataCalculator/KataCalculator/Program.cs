@@ -1,6 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using KataCalculator;
-using KataCalculator.Discount;
 
 Console.WriteLine("Specify Tax:");
 decimal? tax = CheckInput();
