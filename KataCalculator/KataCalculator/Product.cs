@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace KataCalculator
 {
-    public class Product : IProduct
+    public class Product
     {
         public string Name { get; set; }
         public int UPC { get; set; }
