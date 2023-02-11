@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KataCalculator.Caps;
 using KataCalculator.Discounts;
 using KataCalculator.Expenses;
 using KataCalculator.Products;
@@ -17,11 +18,13 @@ namespace KataCalculator
         public decimal DiscountPercent { get; set; } = 15M;
         public SelectiveDiscountViewModel SelectiveDiscountViewModel { get; set; }
         public ExpenseViewModel ExpenseViewModel { get; set; }
+        public CapViewModel CapViewModel { get; set; }
 
         public PriceCalculator()
         {
             SelectiveDiscountViewModel = new SelectiveDiscountViewModel();
             ExpenseViewModel = new ExpenseViewModel();
+            CapViewModel = new CapViewModel();
         }
 
         public decimal CalculateTaxValue(Product product)
@@ -67,21 +70,35 @@ namespace KataCalculator
             return generalDiscount + CalculateUPCDiscount(product.UPC,generalDiscountedPrice);
         }
 
-        public decimal DiscountAmount(Product product, CombinationType combinationType)
+        public decimal DiscountAmount(Product product, CombinationType combinationType,Cap cap)
         {
+            decimal discountAmount;
+
             if(combinationType == CombinationType.Multiplicative)
             {
-                return MultiplicativeDiscountAmount(product);
+                discountAmount = MultiplicativeDiscountAmount(product);
             }
             else
             {
-                return AccumulativeDiscountAmount(product);
+                discountAmount = AccumulativeDiscountAmount(product);
             }
+
+            if (cap != null)
+            {
+                decimal capAmount = CalculateCapAmount(product, cap);
+
+                if (discountAmount > capAmount)
+                {
+                    discountAmount = capAmount;
+                }
+            }
+
+            return discountAmount;
         }
 
-        public decimal CalculateTotalPrice(Product product,decimal ExpenseSum, CombinationType combinationType)
+        public decimal CalculateTotalPrice(Product product,decimal ExpenseSum, CombinationType combinationType, Cap cap)
         {
-                return product.BasePrice + CalculateTaxValue(product) - DiscountAmount(product,combinationType) + ExpenseSum;   
+                return product.BasePrice + CalculateTaxValue(product) - DiscountAmount(product,combinationType, cap) + ExpenseSum;   
         }
 
         private static decimal CalculatePercentExpenseValue(Product product, Expense expense)
@@ -92,12 +109,13 @@ namespace KataCalculator
         public void printCalculations(Product product,CombinationType combinationType)
         {
             decimal ExpenseSum = 0;
+            Cap cap=CapViewModel.FindUPCCap(product.UPC);
             Console.WriteLine(product.ToString());
             Console.WriteLine($"Tax={TaxPercent.DecimalPlaces(2)}%, " +
-                $"Tax amount=${CalculateTaxValue(product).DecimalPlaces(2)}, Discount amount=${DiscountAmount(product,combinationType).DecimalPlaces(2)}");
+                $"Tax amount=${CalculateTaxValue(product).DecimalPlaces(2)}, Discount amount=${DiscountAmount(product,combinationType,cap).DecimalPlaces(2)}");
             foreach(Expense expense in ExpenseViewModel.FindUPCExpense(product.UPC))
             {
-                if (expense.ExpenseType == ExpenseType.Percent)
+                if (expense.ExpenseType == RelativeType.Percent)
                 {
                     decimal ExpenseValue = CalculatePercentExpenseValue(product, expense);
                     Console.WriteLine(expense.Description+": $"+ExpenseValue.DecimalPlaces(2));
@@ -109,8 +127,20 @@ namespace KataCalculator
                     ExpenseSum += expense.Amount;
                 }
             }
-            Console.WriteLine($"Price before = ${product.BasePrice.DecimalPlaces(2)}, price after = ${CalculateTotalPrice(product,ExpenseSum,combinationType).DecimalPlaces(2)}");
+            Console.WriteLine($"Price before = ${product.BasePrice.DecimalPlaces(2)}, price after = ${CalculateTotalPrice(product,ExpenseSum,combinationType,cap).DecimalPlaces(2)}");
 
+        }
+
+        public decimal CalculateCapAmount(Product product, Cap cap)
+        {
+            if (cap.RelativeType == RelativeType.Absolute)
+            {
+                return cap.Value;
+            }
+            else 
+            {
+                return product.BasePrice * (cap.Value/100);
+            }
         }
     }
 }

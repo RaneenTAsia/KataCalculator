@@ -12,7 +12,7 @@ namespace KataCalculator
         Common
     }
 
-    public enum ExpenseType
+    public enum RelativeType
     {
         Absolute,
         Percent

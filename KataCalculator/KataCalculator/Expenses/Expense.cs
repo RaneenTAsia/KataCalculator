@@ -10,10 +10,10 @@ namespace KataCalculator.Expenses
     {
         public string Description { get; set; }
         public decimal Amount { get; set; }
-        public ExpenseType ExpenseType { get; set; }
+        public RelativeType ExpenseType { get; set; }
         public int UPC { get; set; }
 
-        public Expense(string description, decimal amount, ExpenseType type, int uPC)
+        public Expense(string description, decimal amount, RelativeType type, int uPC)
         {
             Description = description;
             Amount = amount;

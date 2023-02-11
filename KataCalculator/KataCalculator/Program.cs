@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using KataCalculator;
+using KataCalculator.Caps;
 using KataCalculator.Discounts;
 using KataCalculator.Products;
 
@@ -8,8 +9,9 @@ PriceCalculator PriceCalculator = new PriceCalculator();
 ChangeDefaultTaxAndDiscount(PriceCalculator);
 
 CombinationType CombinationType = ReadCombinationType();
+Console.WriteLine();
 
-PrintProducts(PriceCalculator,CombinationType);
+PrintProducts(PriceCalculator, CombinationType);
 
 static void PrintProducts(PriceCalculator priceCalculator, CombinationType combinationType)
 {
@@ -45,8 +47,8 @@ static void ChangeDefaultTaxAndDiscount(PriceCalculator priceCalculator)
 static CombinationType ReadCombinationType()
 {
     Console.WriteLine("Enter Additive or Multiplicative for Discount Combining Method:");
-    string input = Console.ReadLine();
-    if (string.IsNullOrEmpty(input) || input.Equals("Additive"))
+    string input = Console.ReadLine().ToLower();
+    if (string.IsNullOrEmpty(input) || input.Equals("additive"))
     {
         return CombinationType.Additive;
     }
@@ -54,5 +56,4 @@ static CombinationType ReadCombinationType()
     {
         return CombinationType.Multiplicative;
     }
-    Console.WriteLine() ;
 }
