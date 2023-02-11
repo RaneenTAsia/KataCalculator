@@ -14,11 +14,5 @@ namespace KataCalculator.Products
         {
             Products = ProductRepository.GetAll();
         }
-
-        public void GetAll()
-        {
-            List<Product> list = Products.Select(prod => prod).ToList();
-        }
-
     }
 }

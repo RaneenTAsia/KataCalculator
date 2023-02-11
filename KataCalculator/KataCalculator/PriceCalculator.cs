@@ -11,38 +11,39 @@ namespace KataCalculator
 {
     public class PriceCalculator
     {
-        static decimal _taxPercent = 20M;
-        public static decimal TaxPercent { get { return _taxPercent; } set { _taxPercent = value; } }
-        public Product product { get; set; }
-        static decimal _discountPercent = 0M;
-        public static decimal DiscountPercent { get { return _discountPercent; } set { _discountPercent = value; } }
-        public SelectiveDiscountList DiscountList { get; set; }
-        public PriceCalculator() { }
+        public decimal TaxPercent { get; set; } = 20M;
+        public decimal DiscountPercent { get; set; } = 0M;
+        public SelectiveDiscountViewModel SelectiveDiscountViewModel { get; set; }
 
-        public PriceCalculator(Product product, SelectiveDiscountList DiscountList)
+        public PriceCalculator()
         {
-            this.product = product;
-            this.DiscountList = DiscountList;
+            SelectiveDiscountViewModel = new SelectiveDiscountViewModel();
         }
 
-        public decimal CalculateTaxValue()
+        public decimal CalculateTaxValue(Product product)
         {
-            if (DiscountList.FindUPCDiscount(product.UPC) != null && DiscountList.FindUPCDiscount(product.UPC).GetType() == typeof(PrecedenceSelectiveDiscount))
-            return ((product.BasePrice-CalculateUPCDiscount()) * (TaxPercent / 100)).DecimalPlaces(2);
+            if (IsPrecedenceDiscount(product))
+                return ((product.BasePrice - CalculateUPCDiscount(product)) * (TaxPercent / 100)).DecimalPlaces(2);
             else
-            return (product.BasePrice * (TaxPercent / 100)).DecimalPlaces(2);
+                return (product.BasePrice * (TaxPercent / 100)).DecimalPlaces(2);
         }
 
-        public decimal CalculateDiscount()
+        private bool IsPrecedenceDiscount(Product product)
+        {
+            SelectiveDiscount? discount = SelectiveDiscountViewModel.FindUPCDiscount(product.UPC);
+            return discount != null && discount.DiscountType == DiscountType.Precedence;
+        }
+
+        public decimal CalculateDiscount(Product product)
         {
             return (DiscountPercent / 100 * product.BasePrice).DecimalPlaces(2);
         }
 
-        public decimal CalculateUPCDiscount()
+        public decimal CalculateUPCDiscount(Product product)
         {
             decimal? UPCDiscount = 0M;
-            if (DiscountList.FindUPCDiscount(product.UPC)!=null)
-            UPCDiscount=DiscountList.FindUPCDiscount(product.UPC).DiscountPercent;
+            if (SelectiveDiscountViewModel.FindUPCDiscount(product.UPC)!=null)
+            UPCDiscount=SelectiveDiscountViewModel.FindUPCDiscount(product.UPC).DiscountPercent;
             if(UPCDiscount != 0)
             return ((decimal)UPCDiscount / 100 * product.BasePrice).DecimalPlaces(2);
             else
@@ -50,15 +51,23 @@ namespace KataCalculator
 
         }
 
-        public decimal AccumulativeDiscountAmount()
+        public decimal AccumulativeDiscountAmount(Product product)
         {
-            return CalculateUPCDiscount() + CalculateDiscount();
+            return CalculateUPCDiscount(product) + CalculateDiscount(product);
         }
 
-        public decimal CalculateGeneralDiscountedAndTaxedPrice()
+        public decimal CalculateGeneralDiscountedAndTaxedPrice(Product product)
         {
-            decimal value= product.BasePrice+ CalculateTaxValue()-AccumulativeDiscountAmount();
+            decimal value= product.BasePrice+ CalculateTaxValue(product)-AccumulativeDiscountAmount(product);
             return value;
+        }
+
+        public void printCalculations(Product product)
+        {
+            Console.WriteLine(product.ToString());
+            Console.WriteLine($"Tax={TaxPercent}%, " +
+            $"Tax amount=${CalculateTaxValue(product)}, Discount amount=${AccumulativeDiscountAmount(product)}");
+            Console.WriteLine($"Price before = ${product.BasePrice}, price after = ${CalculateGeneralDiscountedAndTaxedPrice(product)}");
         }
 
     }

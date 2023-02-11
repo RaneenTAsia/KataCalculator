@@ -13,10 +13,6 @@ namespace KataCalculator.Products
         public int UPC { get; set; }
         public decimal BasePrice { get; set; }
 
-        public Product()
-        {
-        }
-
         public Product(string name, int UPC, decimal Price)
         {
             Name = name;
