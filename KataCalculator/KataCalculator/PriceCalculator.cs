@@ -30,9 +30,9 @@ namespace KataCalculator
         public decimal CalculateTaxValue(Product product)
         {
             if (IsPrecedenceDiscount(product))
-                return ((product.BasePrice - CalculateUPCDiscount(product.UPC,product.BasePrice)) * (TaxPercent / 100)).DecimalPlaces(2);
+                return ((product.BasePrice - CalculateUPCDiscount(product.UPC,product.BasePrice)) * (TaxPercent / 100)).DecimalPlaces(4);
             else
-                return (product.BasePrice * (TaxPercent / 100M));
+                return (product.BasePrice * (TaxPercent / 100M)).DecimalPlaces(4);
         }
 
         private bool IsPrecedenceDiscount(Product product)
@@ -43,7 +43,7 @@ namespace KataCalculator
 
         public decimal CalculateDiscount(Product product)
         {
-            return DiscountPercent / 100M * product.BasePrice;
+            return (DiscountPercent / 100M * product.BasePrice).DecimalPlaces(4);
         }
 
         public decimal CalculateUPCDiscount(int UPC, decimal BasePrice)
@@ -53,21 +53,21 @@ namespace KataCalculator
             UPCDiscount=SelectiveDiscountViewModel.FindUPCDiscount(UPC).DiscountPercent;
 
             if(UPCDiscount != 0)
-            return ((decimal)UPCDiscount / 100M * BasePrice);
+            return ((decimal)UPCDiscount / 100M * BasePrice).DecimalPlaces(4);
             else
             return 0;
         }
 
         public decimal AccumulativeDiscountAmount(Product product)
         {
-            return CalculateUPCDiscount(product.UPC,product.BasePrice) + CalculateDiscount(product);
+            return (CalculateUPCDiscount(product.UPC,product.BasePrice) + CalculateDiscount(product)).DecimalPlaces(4);
         }
 
         public decimal MultiplicativeDiscountAmount(Product product)
         {
             decimal generalDiscount=CalculateDiscount(product);
             decimal generalDiscountedPrice = product.BasePrice - generalDiscount;
-            return generalDiscount + CalculateUPCDiscount(product.UPC,generalDiscountedPrice);
+            return (generalDiscount + CalculateUPCDiscount(product.UPC,generalDiscountedPrice)).DecimalPlaces(4);
         }
 
         public decimal DiscountAmount(Product product, CombinationType combinationType,Cap cap)
@@ -93,28 +93,28 @@ namespace KataCalculator
                 }
             }
 
-            return discountAmount;
+            return discountAmount.DecimalPlaces(4);
         }
 
         public decimal CalculateTotalPrice(Product product,decimal ExpenseSum, CombinationType combinationType, Cap cap)
         {
-                return product.BasePrice + CalculateTaxValue(product) - DiscountAmount(product,combinationType, cap) + ExpenseSum;   
+                return (product.BasePrice + CalculateTaxValue(product) - DiscountAmount(product,combinationType, cap) + ExpenseSum).DecimalPlaces(4);   
         }
 
         private static decimal CalculatePercentExpenseValue(Product product, Expense expense)
         {
-            return expense.Amount * product.BasePrice;
+            return (expense.Amount * product.BasePrice).DecimalPlaces(4);
         }
 
         public decimal CalculateCapAmount(Product product, Cap cap)
         {
             if (cap.RelativeType == RelativeType.Absolute)
             {
-                return cap.Value;
+                return cap.Value.DecimalPlaces(4);
             }
             else
             {
-                return product.BasePrice * (cap.Value / 100);
+                return (product.BasePrice * (cap.Value / 100)).DecimalPlaces(4);
             }
         }
 
