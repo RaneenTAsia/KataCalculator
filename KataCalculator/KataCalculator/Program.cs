@@ -7,14 +7,16 @@ PriceCalculator PriceCalculator = new PriceCalculator();
 
 ChangeDefaultTaxAndDiscount(PriceCalculator);
 
-PrintProducts(PriceCalculator);
+CombinationType CombinationType = ReadCombinationType();
 
-static void PrintProducts(PriceCalculator priceCalculator)
+PrintProducts(PriceCalculator,CombinationType);
+
+static void PrintProducts(PriceCalculator priceCalculator, CombinationType combinationType)
 {
     ProductViewModel ProductViewModel = new ProductViewModel();
     foreach (var item in ProductViewModel.Products)
     {
-        priceCalculator.printCalculations(item);
+        priceCalculator.printCalculations(item,combinationType);
         Console.WriteLine();
     }
 }
@@ -38,4 +40,19 @@ static void ChangeDefaultTaxAndDiscount(PriceCalculator priceCalculator)
     if (discount != null)
         priceCalculator.DiscountPercent = (decimal)discount;
     Console.WriteLine();
+}
+
+static CombinationType ReadCombinationType()
+{
+    Console.WriteLine("Enter Additive or Multiplicative for Discount Combining Method:");
+    string input = Console.ReadLine();
+    if (string.IsNullOrEmpty(input) || input.Equals("Additive"))
+    {
+        return CombinationType.Additive;
+    }
+    else
+    {
+        return CombinationType.Multiplicative;
+    }
+    Console.WriteLine() ;
 }

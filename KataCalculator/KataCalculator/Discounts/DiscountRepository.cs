@@ -14,7 +14,7 @@ namespace KataCalculator.Discounts
         {
             return new List<SelectiveDiscount>
             {
-              new SelectiveDiscount(39846, 15M, DiscountType.Common),
+              new SelectiveDiscount(39846, 7M, DiscountType.Common),
               new SelectiveDiscount(2637458, 15M, DiscountType.Precedence)
             };
         }

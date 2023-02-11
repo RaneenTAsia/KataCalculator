@@ -13,7 +13,7 @@ namespace KataCalculator.Products
         {
             return new List<Product>
             {
-              new Product("Flag KeyChan",39846,20.50M),
+              new Product("Flag KeyChan",39846,20.25M),
               new Product("Map Hoodie",2637458,129.39M)
             };
         }

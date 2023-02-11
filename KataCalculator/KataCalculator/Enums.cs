@@ -17,5 +17,10 @@ namespace KataCalculator
         Absolute,
         Percent
     }
+    public enum CombinationType
+    {
+        Additive,
+        Multiplicative
+    }
 
 }

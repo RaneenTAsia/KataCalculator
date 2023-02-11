@@ -14,8 +14,8 @@ namespace KataCalculator.Expenses
         {
             return new List<Expense>
             {
-              new Expense("Packaging", 0.20M, ExpenseType.Percent, 2637458),
-              new Expense("Transport", 0.15M, ExpenseType.Absolute, 2637458)
+              new Expense("Packaging", 0.01M, ExpenseType.Percent, 39846),
+              new Expense("Transport", 2.20M, ExpenseType.Absolute, 39846)
             };
         }
         #endregion
