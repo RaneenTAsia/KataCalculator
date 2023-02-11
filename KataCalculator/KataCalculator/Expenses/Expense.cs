@@ -22,7 +22,7 @@ namespace KataCalculator.Expenses
         }
         public override string ToString()
         {
-            return this.Description+": $"+this.Amount;
+            return this.Description+": "+this.Amount.AddCurrency();
         }
     }
 }

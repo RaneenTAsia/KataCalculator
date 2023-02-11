@@ -22,7 +22,7 @@ namespace KataCalculator.Products
 
         override public string ToString()
         {
-            return $"Name: {Name}, UPC: {UPC}, Price: {BasePrice}";
+            return $"Name: {Name}, UPC: {UPC}, Price: {BasePrice.AddCurrency()}";
         }
 
     }

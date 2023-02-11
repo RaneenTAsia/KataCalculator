@@ -106,19 +106,31 @@ namespace KataCalculator
             return expense.Amount * product.BasePrice;
         }
 
+        public decimal CalculateCapAmount(Product product, Cap cap)
+        {
+            if (cap.RelativeType == RelativeType.Absolute)
+            {
+                return cap.Value;
+            }
+            else
+            {
+                return product.BasePrice * (cap.Value / 100);
+            }
+        }
+
         public void printCalculations(Product product,CombinationType combinationType)
         {
             decimal ExpenseSum = 0;
             Cap cap=CapViewModel.FindUPCCap(product.UPC);
             Console.WriteLine(product.ToString());
-            Console.WriteLine($"Tax={TaxPercent.DecimalPlaces(2)}%, " +
-                $"Tax amount=${CalculateTaxValue(product).DecimalPlaces(2)}, Discount amount=${DiscountAmount(product,combinationType,cap).DecimalPlaces(2)}");
+            Console.WriteLine($"Tax = {TaxPercent.DecimalPlaces(2)}%, " +
+                $"Tax amount = {CalculateTaxValue(product).DecimalPlaces(2).AddCurrency()}, Discount amount = {DiscountAmount(product,combinationType,cap).DecimalPlaces(2).AddCurrency()}");
             foreach(Expense expense in ExpenseViewModel.FindUPCExpense(product.UPC))
             {
                 if (expense.ExpenseType == RelativeType.Percent)
                 {
                     decimal ExpenseValue = CalculatePercentExpenseValue(product, expense);
-                    Console.WriteLine(expense.Description+": $"+ExpenseValue.DecimalPlaces(2));
+                    Console.WriteLine(expense.Description+": "+ExpenseValue.DecimalPlaces(2).AddCurrency());
                     ExpenseSum += ExpenseValue;
                 }
                 else
@@ -127,20 +139,8 @@ namespace KataCalculator
                     ExpenseSum += expense.Amount;
                 }
             }
-            Console.WriteLine($"Price before = ${product.BasePrice.DecimalPlaces(2)}, price after = ${CalculateTotalPrice(product,ExpenseSum,combinationType,cap).DecimalPlaces(2)}");
+            Console.WriteLine($"Price before = {product.BasePrice.DecimalPlaces(2).AddCurrency()}, price after = {CalculateTotalPrice(product,ExpenseSum,combinationType,cap).DecimalPlaces(2).AddCurrency()}");
 
-        }
-
-        public decimal CalculateCapAmount(Product product, Cap cap)
-        {
-            if (cap.RelativeType == RelativeType.Absolute)
-            {
-                return cap.Value;
-            }
-            else 
-            {
-                return product.BasePrice * (cap.Value/100);
-            }
         }
     }
 }
