@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KataCalculator.Discounts;
+using KataCalculator.Expenses;
 using KataCalculator.Products;
 
 namespace KataCalculator
@@ -14,10 +15,12 @@ namespace KataCalculator
         public decimal TaxPercent { get; set; } = 20M;
         public decimal DiscountPercent { get; set; } = 0M;
         public SelectiveDiscountViewModel SelectiveDiscountViewModel { get; set; }
+        public ExpenseViewModel ExpenseViewModel { get; set; }
 
         public PriceCalculator()
         {
             SelectiveDiscountViewModel = new SelectiveDiscountViewModel();
+            ExpenseViewModel = new ExpenseViewModel();
         }
 
         public decimal CalculateTaxValue(Product product)
@@ -56,19 +59,39 @@ namespace KataCalculator
             return CalculateUPCDiscount(product) + CalculateDiscount(product);
         }
 
-        public decimal CalculateGeneralDiscountedAndTaxedPrice(Product product)
+        public decimal CalculateTotalPrice(Product product,decimal ExpenseSum)
         {
-            decimal value= product.BasePrice+ CalculateTaxValue(product)-AccumulativeDiscountAmount(product);
+            decimal value= product.BasePrice+ CalculateTaxValue(product)-AccumulativeDiscountAmount(product)+ExpenseSum;
             return value;
         }
 
         public void printCalculations(Product product)
         {
+            decimal ExpenseSum = 0;
             Console.WriteLine(product.ToString());
             Console.WriteLine($"Tax={TaxPercent}%, " +
             $"Tax amount=${CalculateTaxValue(product)}, Discount amount=${AccumulativeDiscountAmount(product)}");
-            Console.WriteLine($"Price before = ${product.BasePrice}, price after = ${CalculateGeneralDiscountedAndTaxedPrice(product)}");
+            foreach(Expense expense in ExpenseViewModel.FindUPCExpense(product.UPC))
+            {
+                if (expense.ExpenseType == ExpenseType.Percent)
+                {
+                    decimal ExpenseValue = CalculatePercentExpenseValue(product, expense);
+                    Console.WriteLine(expense.Description+": $"+ExpenseValue.DecimalPlaces(2));
+                    ExpenseSum += ExpenseValue;
+                }
+                else
+                {
+                    Console.WriteLine(expense.ToString());
+                    ExpenseSum += expense.Amount;
+                }
+            }
+            Console.WriteLine($"Price before = ${product.BasePrice}, price after = ${CalculateTotalPrice(product,ExpenseSum).DecimalPlaces(2)}");
+
         }
 
+        private static decimal CalculatePercentExpenseValue(Product product, Expense expense)
+        {
+            return expense.Amount * product.BasePrice;
+        }
     }
 }
