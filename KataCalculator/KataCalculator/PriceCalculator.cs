@@ -98,7 +98,7 @@ namespace KataCalculator
 
         public decimal CalculateTotalPrice(Product product,decimal ExpenseSum, CombinationType combinationType, Cap cap)
         {
-                return (product.BasePrice + CalculateTaxValue(product) - DiscountAmount(product,combinationType, cap) + ExpenseSum).DecimalPlaces(4);   
+                return (product.BasePrice + CalculateTaxValue(product) - DiscountAmount(product,combinationType, cap) + ExpenseSum.DecimalPlaces(4)).DecimalPlaces(4);   
         }
 
         private static decimal CalculatePercentExpenseValue(Product product, Expense expense)
