@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace KataCalculator
+﻿namespace KataCalculator
 {
     public enum DiscountType
     {
@@ -17,6 +11,7 @@ namespace KataCalculator
         Absolute,
         Percent
     }
+
     public enum CombinationType
     {
         Additive,

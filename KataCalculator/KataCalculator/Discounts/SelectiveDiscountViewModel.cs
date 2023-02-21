@@ -15,7 +15,7 @@ namespace KataCalculator.Discounts
             list = DiscountRepository.GetAll();
         }
 
-        public SelectiveDiscount FindUPCDiscount(int UPC)
+        public SelectiveDiscount? FindUPCDiscount(int UPC)
         {
             return list.Where(discount => discount.UPC == UPC).Select(discount => discount).FirstOrDefault();
         }

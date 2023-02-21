@@ -1,62 +1,72 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using KataCalculator;
-using KataCalculator.Caps;
-using KataCalculator.Discounts;
+using KataCalculator.PriceCalculators;
 using KataCalculator.Products;
 
-PriceCalculator PriceCalculator = new PriceCalculator();
+PriceCalculatorConfigurations PriceCalculatorConfigurations = ReadPriceCalculatorConfigurations();
 
-ChangeDefaultTaxAndDiscount(PriceCalculator);
+PriceCalculator PriceCalculator = new PriceCalculator(PriceCalculatorConfigurations);
 
-CombinationType CombinationType = ReadCombinationType();
+PrintProducts(PriceCalculator);
 
-ChangeCurrency();
-
-PrintProducts(PriceCalculator, CombinationType);
-
-static void PrintProducts(PriceCalculator priceCalculator, CombinationType combinationType)
+static void PrintProducts(PriceCalculator priceCalculator)
 {
     ProductViewModel ProductViewModel = new ProductViewModel();
 
+    PriceCalculatorPrinterConfigurations priceCalculatorPrinterConfigurations = new PriceCalculatorPrinterConfigurations(priceCalculator, ReadCurrencyConfiguration());
+    PriceCalculatorPrinter priceCalculatorPrinter = new PriceCalculatorPrinter(priceCalculatorPrinterConfigurations);
+
     foreach (var item in ProductViewModel.Products)
     {
-        priceCalculator.printCalculations(item, combinationType);
+        priceCalculatorPrinter.printCalculations(item);
         Console.WriteLine();
     }
 }
 
-static decimal? CheckDecimalInput()
+static PriceCalculatorConfigurations ReadPriceCalculatorConfigurations()
 {
-    string input = Console.ReadLine();
+    var taxConfiguration = ReadTaxConfiguration();
+
+    var discountConfiguration = ReadDiscountConfigurations();
+
+    CombinationType combinationTypeConfiguration = ReadCombinationTypeConfiguration();
+
+    return new PriceCalculatorConfigurations(taxConfiguration, discountConfiguration, combinationTypeConfiguration);
+}
+
+static decimal? ReadTaxConfiguration()
+{
+    Console.WriteLine("Specify Tax:");
+    decimal? tax = ReadAndParseDecimalInput();
+
+    Console.WriteLine();
+
+    return tax;
+}
+
+static decimal? ReadDiscountConfigurations()
+{
+    Console.WriteLine("Specify general discount");
+    decimal? discount = ReadAndParseDecimalInput();
+
+    Console.WriteLine();
+
+    return discount;
+}
+
+static decimal? ReadAndParseDecimalInput()
+{
+    string? input = Console.ReadLine();
     return string.IsNullOrEmpty(input) ? null : Decimal.Parse(input);
 }
 
-static void ChangeDefaultTaxAndDiscount(PriceCalculator priceCalculator)
-{
-    Console.WriteLine("Specify Tax:");
-    decimal? tax = CheckDecimalInput();
-
-    Console.WriteLine();
-
-    Console.WriteLine("Specify general discount");
-    decimal? discount = CheckDecimalInput();
-
-    if (tax != null)
-        priceCalculator.TaxPercent = (decimal)tax;
-
-    if (discount != null)
-        priceCalculator.DiscountPercent = (decimal)discount;
-
-    Console.WriteLine();
-}
-
-static CombinationType ReadCombinationType()
+static CombinationType ReadCombinationTypeConfiguration()
 {
     Console.WriteLine("Enter Additive or Multiplicative for Discount Combining Method:");
-    string input = Console.ReadLine().ToLower();
+    string? input = Console.ReadLine();
     Console.WriteLine();
 
-    if (string.IsNullOrEmpty(input) || input.Equals("additive"))
+    if (string.IsNullOrEmpty(input) || input.ToLower().Equals("additive"))
     {
         return CombinationType.Additive;
     }
@@ -66,24 +76,19 @@ static CombinationType ReadCombinationType()
     }
 }
 
-static string ReadCurrency()
+static string ReadCurrencyConfiguration()
 {
     Console.WriteLine("Specify Currency");
     string? input = Console.ReadLine();
 
-    if (input != null && input.Length > 3)
+    if (input != null)
     {
-        input = input.Substring(0,3);
+        if (input.Length > 3)
+        {
+            input = input.Substring(0, 3);
+        }
+        return input.ToUpper();
     }
 
-    return input.ToUpper();
-}
-
-static void ChangeCurrency()
-{
-    string? change = ReadCurrency();
-    if (change != null)
-        Extensions.Currency = change;
-
-    Console.WriteLine();
+    return "";
 }

@@ -1,11 +1,4 @@
-﻿using KataCalculator.Products;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace KataCalculator.Discounts
+﻿namespace KataCalculator.Discounts
 {
     public class DiscountRepository
     {

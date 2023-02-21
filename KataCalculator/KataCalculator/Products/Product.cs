@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.AccessControl;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace KataCalculator.Products
+﻿namespace KataCalculator.Products
 {
     public class Product
     {
@@ -19,11 +12,5 @@ namespace KataCalculator.Products
             this.UPC = UPC;
             BasePrice = Price;
         }
-
-        override public string ToString()
-        {
-            return $"Name: {Name}, UPC: {UPC}, Price: {BasePrice.AddCurrency()}";
-        }
-
     }
 }

@@ -1,12 +1,4 @@
-﻿using KataCalculator.Discounts;
-using KataCalculator.Products;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace KataCalculator.Expenses
+﻿namespace KataCalculator.Expenses
 {
     public class ExpenseViewModel
     {

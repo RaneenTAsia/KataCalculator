@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace KataCalculator.Expenses
+﻿namespace KataCalculator.Expenses
 {
     public class Expense
     {
@@ -22,7 +16,7 @@ namespace KataCalculator.Expenses
         }
         public override string ToString()
         {
-            return this.Description+": "+this.Amount.AddCurrency();
+            return this.Description + ": " + this.Amount;
         }
     }
 }
