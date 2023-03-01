@@ -9,7 +9,7 @@ namespace KataCalculator.PriceCalculators
     {
         public decimal TaxPercent { get; set; }
         public decimal DiscountPercent { get; set; }
-        public SelectiveDiscountViewModel SelectiveDiscountViewModel { get; set; }
+        public SelectiveDiscountService SelectiveDiscounService { get; set; }
         public CombinationType CombinationType { get; set; }
 
 
@@ -18,8 +18,7 @@ namespace KataCalculator.PriceCalculators
             TaxPercent = priceCalculatorConfigurations.TaxConfiguration;
             DiscountPercent = priceCalculatorConfigurations.DiscountConfiguration;
             CombinationType = priceCalculatorConfigurations.CombinationTypeConfiguration;
-
-            SelectiveDiscountViewModel = new SelectiveDiscountViewModel();
+            SelectiveDiscounService = priceCalculatorConfigurations.SelectiveDiscountService;
         }
 
         public decimal CalculateTaxValue(Product product)
@@ -32,7 +31,7 @@ namespace KataCalculator.PriceCalculators
 
         private bool IsPrecedenceDiscount(Product product)
         {
-            SelectiveDiscount? discount = SelectiveDiscountViewModel.FindUPCDiscount(product.UPC);
+            SelectiveDiscount? discount = SelectiveDiscounService.FindUPCDiscount(product.UPC);
             return discount != null && discount.DiscountType == DiscountType.Precedence;
         }
 
@@ -44,8 +43,8 @@ namespace KataCalculator.PriceCalculators
         public decimal CalculateUPCDiscount(int UPC, decimal BasePrice)
         {
             decimal UPCDiscount = 0M;
-            if (SelectiveDiscountViewModel.FindUPCDiscount(UPC) != null)
-                UPCDiscount = SelectiveDiscountViewModel.FindUPCDiscount(UPC).DiscountPercent;
+            if (SelectiveDiscounService.FindUPCDiscount(UPC) != null)
+                UPCDiscount = SelectiveDiscounService.FindUPCDiscount(UPC).DiscountPercent;
 
             if (UPCDiscount != 0)
                 return ((decimal)UPCDiscount / 100M * BasePrice).DecimalPlaces(4);

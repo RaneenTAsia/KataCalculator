@@ -8,19 +8,21 @@ namespace KataCalculator.PriceCalculators
     {
         public PriceCalculator PriceCalculator { get; set; }
         public string Currency { get; set; }
-        public ExpenseViewModel ExpenseViewModel { get; set; }
-        public CapViewModel CapViewModel { get; set; }
+        public ExpenseService ExpenseService { get; set; }
+        public CapService CapViewModel { get; set; }
 
         public PriceCalculatorPrinter(PriceCalculatorPrinterConfigurations priceCalculatorPrinterConfigurations)
         {
             PriceCalculator = priceCalculatorPrinterConfigurations.PriceCalculator;
             Currency = priceCalculatorPrinterConfigurations.Currency;
-            ExpenseViewModel = new ExpenseViewModel();
-            CapViewModel = new CapViewModel();
+            ExpenseService = priceCalculatorPrinterConfigurations.ExpenseService;
+            CapViewModel = priceCalculatorPrinterConfigurations.CapService;
         }
 
         public void printCalculations(Product product)
         {
+            PriceCalculator.SelectiveDiscounService.GetAll();
+
             Cap? cap = CapViewModel.FindUPCCap(product.UPC);
 
             Console.WriteLine($"Name: {product.Name}, UPC: {product.UPC}, Price Before: {product.BasePrice.DecimalPlaces(2).AddCurrency(Currency)}");
@@ -29,7 +31,7 @@ namespace KataCalculator.PriceCalculators
                 $"Discount amount = {PriceCalculator.CalculateDiscountAmount(product, PriceCalculator.CombinationType, cap).DecimalPlaces(2).AddCurrency(Currency)}");
 
             decimal ExpenseSum = 0;
-            foreach (Expense expense in ExpenseViewModel.FindUPCExpense(product.UPC))
+            foreach (Expense expense in ExpenseService.FindUPCExpense(product.UPC))
             {
                 if (expense.ExpenseType == RelativeType.Percent)
                 {
